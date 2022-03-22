@@ -1,0 +1,10 @@
+.osk-key {
+    border: 1px solid #999999;
+    border-radius: 2px;
+    padding: 0.25rem;
+    width: 0.75rem;
+}
+
+.osk-key-isDown {
+    background: #6699ff;
+}
