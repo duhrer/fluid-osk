@@ -165,6 +165,7 @@
         // Arrow handling
         if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(eventCode) !== -1) {
             event.preventDefault();
+            that.applier.change("isDown", false);
 
             if (eventCode === "ArrowLeft") {
                 var previousCol = that.model.focusedCol > 0 ? that.model.focusedCol - 1 : that.options.rowCols - 1;
@@ -239,6 +240,7 @@
         // Arrow handling
         if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(eventCode) !== -1) {
             event.preventDefault();
+            that.applier.change("isDown", false);
 
             if (eventCode === "ArrowLeft") {
                 // Wrap around based on the width of the other rows.
