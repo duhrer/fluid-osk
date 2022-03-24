@@ -3,13 +3,14 @@
         <title>Initial rough test.</title>
         <script src="../node_modules/infusion/dist/infusion-all.js"></script>
         <script src="../src/js/osk.js"></script>
+        <script src="../src/js/layouts.js"></script>
         <link rel="stylesheet" href="../src/css/osk.css"/>
     </head>
     <body>
-        <p class="target"></p>
+        <div class="osk"></div>
 
         <script>
-            var component = osk.layout(".target");
+            var component = osk.layout.qwerty(".osk");
         </script>
     </body>
 </html>

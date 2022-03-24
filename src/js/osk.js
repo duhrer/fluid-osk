@@ -25,7 +25,7 @@
     fluid.defaults("osk.key", {
         gradeNames: ["osk.templateRenderer"],
         markup: {
-            container: "<button class='osk-key'>%label</button>\n"
+            container: "<button class='osk-key osk-key-%label'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></button>\n"
         },
 
         // TODO: Define a sensible definition for multiple modes and keyboard event payloads
@@ -40,6 +40,10 @@
         // shiftKey
 
         model: {
+            col: "{that}.options.col",
+            row: "{that}.options.row",
+            focusedCol: false,
+            focusedRow: false,
             keyStateRegister: {},
             label: "*",
             isDown: false,
@@ -50,10 +54,9 @@
             // .toggleClass( classNames, state )
             isDown: [
                 {
-                    excludeSource: "init",
                     this: "{that}.container",
                     method: "toggleClass",
-                    args: ["osk-key-isDown", "{change}.value"], // classNames, state
+                    args: ["osk-key-isDown", "{change}.value"] // classNames, state
                 },
                 {
                     excludeSource: "init",
@@ -62,21 +65,28 @@
                 }
             ],
             isDeactivated: {
-                excludeSource: "init",
                 this: "{that}.container",
                 method: "toggleClass",
-                args: ["osk-key-isDeactivated", "{change}.value"], // classNames, state
+                args: ["osk-key-isDeactivated", "{change}.value"] // classNames, state
             },
             keyStateRegister: {
                 excludeSource: "init",
                 funcName: "osk.key.relayRegisterChange",
                 args: ["{that}"]
+            },
+            focusedCol: {
+                funcName: "osk.key.focus",
+                args: ["{that}"]
+            },
+            focusedRow: {
+                funcName: "osk.key.focus",
+                args: ["{that}"]
             }
         },
         invokers: {
             handleKeydown: {
-                funcName: "osk.key.handleKeyEvent",
-                args: ["{arguments}.0", "{that}.handleDown"] //event, callback
+                funcName: "osk.key.handleKeyDown",
+                args: ["{that}", "{arguments}.0", "{that}.handleDown"] //event, callback
             },
             handleKeyup: {
                 funcName: "osk.key.handleKeyEvent",
@@ -89,9 +99,18 @@
             handleUp: {
                 funcName: "osk.key.handleUp",
                 args: ["{that}", "{arguments}.0"] // event
+            },
+            updateFocus: {
+                funcName: "osk.key.updateModelFocus",
+                args: ["{that}"]
             }
         },
         listeners: {
+            "onCreate.bindFocus": {
+                "this": "{that}.container",
+                "method": "focus",
+                "args": ["{that}.updateFocus"]
+            },
             "onCreate.bindMousedown": {
                 "this": "{that}.container",
                 "method": "mousedown",
@@ -100,6 +119,11 @@
             "onCreate.bindMouseup": {
                 "this": "{that}.container",
                 "method": "mouseup",
+                "args": ["{that}.handleUp"]
+            },
+            "onCreate.bindMouseout": {
+                "this": "{that}.container",
+                "method": "mouseout",
                 "args": ["{that}.handleUp"]
             },
             "onCreate.bindKeydown": {
@@ -114,6 +138,20 @@
             }
         }
     });
+
+    osk.key.focus = function (that) {
+        if (that.model.row === that.model.focusedRow) {
+            var isLastColumn = that.model.col === that.options.rowCols - 1;
+            if (that.model.col === that.model.focusedCol || isLastColumn && that.model.focusedCol > that.model.col) {
+                that.container.focus();
+            }
+        }
+    };
+
+    osk.key.updateModelFocus = function (that) {
+        that.applier.change("focusedCol", that.model.col);
+        that.applier.change("focusedRow", that.model.row);
+    };
 
     osk.key.handleDown = function (that, event) {
         if (!that.model.isDeactivated) {
@@ -134,14 +172,107 @@
         }
     };
 
+    osk.key.handleKeyDown = function (that, event, callback) {
+        var eventCode = fluid.get(event, "code");
+        // Arrow handling
+        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(eventCode) !== -1) {
+            event.preventDefault();
+
+            if (eventCode === "ArrowLeft") {
+                var previousCol = that.model.focusedCol > 0 ? that.model.focusedCol - 1 : that.options.rowCols - 1;
+                that.applier.change("focusedCol", previousCol);
+            }
+            else if (eventCode === "ArrowRight") {
+                var nextCol = that.model.focusedCol <  that.options.rowCols - 1 ? that.model.focusedCol + 1 : 0;
+                that.applier.change("focusedCol", nextCol);
+            }
+            else if (eventCode === "ArrowUp") {
+                var previousRow = that.model.focusedRow > 0 ? that.model.focusedRow - 1 : that.options.numRows - 1;
+                that.applier.change("focusedRow", previousRow);
+            }
+            else if (eventCode === "ArrowDown") {
+                var nextRow = that.model.focusedRow < that.options.numRows - 1 ? that.model.focusedRow + 1 : 0;
+                that.applier.change("focusedRow", nextRow);
+            }
+        }
+        else {
+            osk.key.handleKeyEvent(event,callback);
+        }
+    };
+
     osk.key.relayDownChangeToRegister = function (that) {
-        // TODO: We need a more robust unique identifier for the register.
-        that.applier.change(["keyStateRegister", that.model.label], that.model.isDown);
+        that.applier.change(["keyStateRegister", that.model.code], that.model.isDown);
     };
 
     osk.key.relayRegisterChange = function (that) {
-        var isDownValue = fluid.get(that.model, ["keyStateRegister", that.model.label])  || false;
+        var isDownValue = fluid.get(that.model, ["keyStateRegister", that.model.code])  || false;
         that.applier.change("isDown", isDownValue);
+    };
+
+    fluid.defaults("osk.key.wide", {
+        gradeNames: ["osk.key"],
+        markup: {
+            container: "<button class='osk-key osk-key-wide osk-key-%label'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></button>\n"
+        },
+        invokers: {
+            handleKeydown: {
+                funcName: "osk.key.wide.handleKeyDown",
+                args: ["{that}", "{arguments}.0", "{that}.handleDown"] //event, callback
+            },
+            updateFocus: {
+                funcName: "osk.key.wide.updateModelFocus",
+                args: ["{that}"]
+            }
+        },
+        modelListeners: {
+            focusedCol: {
+                funcName: "osk.key.wide.focus",
+                args: ["{that}"]
+            },
+            focusedRow: {
+                funcName: "osk.key.wide.focus",
+                args: ["{that}"]
+            }
+        }
+    });
+
+    osk.key.wide.focus = function (that) {
+        if (that.model.row === that.model.focusedRow) {
+            that.container.focus();
+        }
+    };
+
+    osk.key.wide.updateModelFocus = function (that) {
+        that.applier.change("focusedRow", that.model.row);
+    };
+
+    osk.key.wide.handleKeyDown = function (that, event, callback) {
+        var eventCode = fluid.get(event, "code");
+        // Arrow handling
+        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(eventCode) !== -1) {
+            event.preventDefault();
+
+            if (eventCode === "ArrowLeft") {
+                // Wrap around based on the width of the other rows.
+                var previousCol = that.model.focusedCol > 0 ? that.model.focusedCol - 1 : 15;
+                that.applier.change("focusedCol", previousCol);
+            }
+            else if (eventCode === "ArrowRight") {
+                var nextCol = that.model.focusedCol <  14 ? that.model.focusedCol + 1 : 0;
+                that.applier.change("focusedCol", nextCol);
+            }
+            else if (eventCode === "ArrowUp") {
+                var previousRow = that.model.focusedRow > 0 ? that.model.focusedRow - 1 : that.options.numRows - 1;
+                that.applier.change("focusedRow", previousRow);
+            }
+            else if (eventCode === "ArrowDown") {
+                var nextRow = that.model.focusedRow < that.options.numRows - 1 ? that.model.focusedRow + 1 : 0;
+                that.applier.change("focusedRow", nextRow);
+            }
+        }
+        else {
+            osk.key.handleKeyEvent(event,callback);
+        }
     };
 
     fluid.defaults("osk.row", {
@@ -149,7 +280,9 @@
         markup: {
             container: "<div class='osk-row'></div>"
         },
-        keyDefs: [ { label: "-"} ],
+        keyDefs: [ { code: "Digit2", label: "2", shiftLabel: "@"} ],
+        rowCols: "{osk.row}.options.keyDefs.length",
+        maxCols: "{osk.row}.options.keyDefs.length",
         model: {
             keyStateRegister: {}
         },
@@ -159,9 +292,19 @@
                 container: "{that}.container",
                 sources: "{that}.options.keyDefs",
                 options: {
+                    gradeNames: "{source}.gradeNames",
+                    col: "{sourcePath}",
+                    row: "{osk.row}.options.row",
+                    rowCols: "{osk.row}.options.rowCols",
+                    maxCols: "{osk.row}.options.maxCols",
+                    numRows: "{osk.row}.options.numRows",
                     model: {
                         isDeactivated: "{source}.isDeactivated",
+                        code: "{source}.code",
+                        focusedCol: "{osk.row}.model.focusedCol",
+                        focusedRow: "{osk.row}.model.focusedRow",
                         label: "{source}.label",
+                        shiftLabel: "{source}.shiftLabel",
                         keyStateRegister: "{osk.row}.model.keyStateRegister"
                     }
                 }
@@ -191,27 +334,44 @@
     fluid.defaults("osk.layout", {
         gradeNames: ["osk.templateRenderer"],
         markup: {
-            container: "<div class='osk-layout'></div>"
+            container: "<div class='osk-layout'</div>"
         },
         model: {
-            keyStateRegister: {}
+            keyStateRegister: {},
+            focusedRow: false,
+            focusedCol: false
         },
         rowDefs: [
-            [{ label: "1"}, { label: "2"}, { label: "3"}, { label: "4"}, { label: "5"}, { label: "6"}, { label: "7"}, { label: "8"}, { label: "9"}, { label: "0"}, { label: "-"}, { label: "+"}],
-            [{ label: "Q"}, { label: "W"}, { label: "E"}, { label: "R"}, { label: "T"}, { label: "Y"}, { label: "U"}, { label: "I"}, { label: "O"}, { label: "P"}],
-            [{ label: "A"}, { label: "S"}, { label: "D"}, { label: "F"}, { label: "G"}, { label: "H"}, { label: "J"}, { label: "K"}, { label: "L"}, { label: ":"}],
-            [{ label: "Z"}, { label: "X"}, { label: "C"}, { label: "V"}, { label: "B"}, { label: "N"}, { label: "M"}, { label: ",", isDeactivated: true}, { label: "."}, { label: "?"}]
+            [{ code: "Digit1", label: "1", shiftLabel: "!"}]
         ],
+        maxCols: "@expand:osk.layout.maxCols({that.options.rowDefs})",
+        // Needed to avoid trying to expand a single "{" as the start of an IoC expression."
+        mergePolicy: { "rowDefs": "noexpand" },
         dynamicComponents: {
             rows: {
                 type: "osk.row",
                 container: "{that}.container",
                 sources: "{that}.options.rowDefs",
                 options: {
-                    model: { keyStateRegister: "{layout}.model.keyStateRegister"},
+                    numRows: "{osk.layout}.options.rowDefs.length",
+                    row: "{sourcePath}",
+                    model: {
+                        focusedCol: "{layout}.model.focusedCol",
+                        focusedRow: "{layout}.model.focusedRow",
+                        keyStateRegister: "{layout}.model.keyStateRegister"
+                    },
                     keyDefs: "{source}"
                 }
             }
         }
     });
+
+    osk.layout.maxCols = function (defsArray) {
+        var maxCols = 0;
+        fluid.each(defsArray, function (rowDef) {
+            maxCols = Math.max(maxCols, rowDef.length);
+        });
+        return maxCols;
+    };
+
 })(fluid);

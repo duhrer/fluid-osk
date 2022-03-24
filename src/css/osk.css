@@ -1,9 +1,49 @@
+.osk-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .osk-key {
-    border: 1px solid #999999;
-    border-radius: 2px;
+    border: 1px solid #999;
+    border-radius: 10px;
+    height: 3rem;
+    margin: 0.5rem;
     padding: 0.25rem;
+    width: 3rem;
+}
+
+.osk-key-space {
+    margin-left: 9rem;
+    width: 35rem;
 }
 
 .osk-key-isDown {
-    background: #6699ff;
+    background: #69f;
+}
+
+.osk-key-isDeactivated {
+    color: #999;
+}
+
+.osk-key-shiftLabel,
+.osk-key-label {
+    height: 1.25rem;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+}
+
+.osk-key-Tab,
+.osk-key-\\ {
+    width: 4.5rem;
+}
+
+.osk-key-CapsLock,
+.osk-key-Backspace,
+.osk-key-Enter {
+    width: 6rem;
+}
+
+.osk-key-shift {
+    width: 7.5rem;
 }
