@@ -3,11 +3,11 @@
     var keysByCode = {
         Backquote: { code: "Backquote", label: "`", shiftLabel: "~" },
         Backslash: { code: "Backslash", label: "\\", shiftLabel: "|"},
-        Backspace: { code: "Backspace", label: "Backspace", shiftLabel: ""},
+        Backspace: { code: "Backspace", label: "Backspace", shiftLabel: "", isDeactivated: true},
         BracketLeft: { code: "BracketLeft", label: "[" , shiftLabel: "{" },
         BracketRight: { code: "BracketRight", label: "]", shiftLabel: "}"},
-        CapsLock: { code: "CapsLock", label: "capslock", shiftLabel: ""},
-        Comma: { code: "Comma", label: ",", shiftLabel: "<", isDeactivated: true},
+        CapsLock: { code: "CapsLock", label: "capslock", shiftLabel: "", isDeactivated: true},
+        Comma: { code: "Comma", label: ",", shiftLabel: "<"},
 
         Digit1: { code: "Digit1", label: "1", shiftLabel: "!"},
         Digit2: { code: "Digit2", label: "2", shiftLabel: "@"},
@@ -20,7 +20,7 @@
         Digit9: { code: "Digit9", label: "9", shiftLabel: "("},
         Digit0: { code: "Digit0", label: "0", shiftLabel: ")"},
 
-        Enter: { code: "Enter", label: "Enter", shiftLabel: ""},
+        Enter: { code: "Enter", label: "Enter", shiftLabel: "", isDeactivated: true},
         Equal: { code: "Equal", label: "=", shiftLabel: "+"},
 
         KeyA: { code: "KeyA", label: "A", shiftLabel: "" },
@@ -54,11 +54,11 @@
         Period: { code: "Period", label: ".", shiftLabel: ">"},
         Quote: { code: "Quote", label: "'", shiftLabel: "\""},
         Semicolon: { code: "Semicolon", label: ";", shiftLabel: ":"},
-        ShiftLeft: { code: "ShiftLeft", label: "shift", shiftLabel: ""},
-        ShiftRight: { code: "ShiftRight", label: "shift", shiftLabel: ""},
+        ShiftLeft: { code: "ShiftLeft", label: "shift", shiftLabel: "", isDeactivated: true},
+        ShiftRight: { code: "ShiftRight", label: "shift", shiftLabel: "", isDeactivated: true},
         Slash: { code: "Slash", label: "/", shiftLabel: "?"},
-        Space: { code: "Space", label: "Space", shiftLabel: "", gradeNames: ["osk.key.wide"]},
-        Tab: { code: "Tab", label: "tab", shiftLabel: ""}
+        Space: { code: "Space", label: "Space", shiftLabel: "", gradeNames: ["osk.key.wide"], isDeactivated: true},
+        Tab: { code: "Tab", label: "tab", shiftLabel: "", isDeactivated: true}
     };
 
     fluid.defaults("osk.layout.qwerty", {

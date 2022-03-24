@@ -27,18 +27,6 @@
         markup: {
             container: "<button class='osk-key osk-key-%label'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></button>\n"
         },
-
-        // TODO: Define a sensible definition for multiple modes and keyboard event payloads
-        // altKey
-        // code
-        // ctrlKey
-        // isComposing
-        // key
-        // location
-        // metaKey
-        // repeat
-        // shiftKey
-
         model: {
             col: "{that}.options.col",
             row: "{that}.options.row",
@@ -312,25 +300,6 @@
         }
     });
 
-    // TODO: Figure how to relay key models up/down.
-    /*
-        Can't see any examples of sensibly defining a model relay as part of a dynamic component's {source}.  Talk to Ant.
-
-        To pull changes up from keys to the outermost component, could distribute an onModelChange event listeners to
-        all keys.  These would report the changes (i.e. keys pressed or release) and the outermost component would
-        update its own internal register of what's held or not.  Don't know how to push changes down to the keys.  I
-        was going to say that we'd need to use a "source" to avoid the model change round-tripping, but it should be
-        fine for there to be one "bounce" in key->outermost changes that come back as outermost->key changes, as the
-        key will not trigger the model listeners a second time.
-
-        Distribute a function to programmatically wired up the model relay that is fired after each key is created?
-        That would allow for outermost->key and key->outermost relays.
-
-        Could also use a more react-like pattern, where the keydown/mousedown, etc. handlers are provided by the
-        outermost component, and relay model changes downward to the keys.  This implies that we have a sensible
-        strategy to do this (which we don't yet).
-
-     */
     fluid.defaults("osk.layout", {
         gradeNames: ["osk.templateRenderer"],
         markup: {
