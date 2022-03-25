@@ -7,6 +7,7 @@
         markup: {
             container: ""
         },
+        model: {},
         invokers: {
             renderMarkup: {
                 funcName: "osk.templateRenderer.render",
@@ -20,18 +21,13 @@
         return renderedContent;
     };
 
-    // TODO: Touch bindings
-
-    fluid.defaults("osk.key", {
+    // A base grade that is not designed to be focusable or navigable.
+    fluid.defaults("osk.blank", {
         gradeNames: ["osk.templateRenderer"],
         markup: {
-            container: "<button class='osk-key osk-key-%label'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></button>\n"
+            container: "<div class='osk-key osk-key-%label'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></div>\n"
         },
         model: {
-            col: "{that}.options.col",
-            row: "{that}.options.row",
-            focusedCol: false,
-            focusedRow: false,
             keyStateRegister: {},
             label: "*",
             isDown: false,
@@ -61,7 +57,23 @@
                 excludeSource: "init",
                 funcName: "osk.key.relayRegisterChange",
                 args: ["{that}"]
-            },
+            }
+        }
+    })
+
+    // A grade that is designed for use in a layout, i.e. that supports navigation between keys.
+    fluid.defaults("osk.key", {
+        gradeNames: ["osk.blank"],
+        markup: {
+            container: "<button class='osk-key osk-key-%label'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></button>\n"
+        },
+        model: {
+            col: "{that}.options.col",
+            row: "{that}.options.row",
+            focusedCol: false,
+            focusedRow: false
+        },
+        modelListeners: {
             focusedCol: {
                 funcName: "osk.key.focus",
                 args: ["{that}"]
@@ -94,35 +106,36 @@
             }
         },
         listeners: {
+            // TODO: Touch bindings
             "onCreate.bindFocus": {
-                "this": "{that}.container",
-                "method": "focus",
-                "args": ["{that}.updateFocus"]
+                this: "{that}.container",
+                method: "focus",
+                args: ["{that}.updateFocus"]
             },
             "onCreate.bindMousedown": {
-                "this": "{that}.container",
-                "method": "mousedown",
-                "args": ["{that}.handleDown"]
+                this: "{that}.container",
+                method: "mousedown",
+                args: ["{that}.handleDown"]
             },
             "onCreate.bindMouseup": {
-                "this": "{that}.container",
-                "method": "mouseup",
-                "args": ["{that}.handleUp"]
+                this: "{that}.container",
+                method: "mouseup",
+                args: ["{that}.handleUp"]
             },
             "onCreate.bindMouseout": {
-                "this": "{that}.container",
-                "method": "mouseout",
-                "args": ["{that}.handleUp"]
+                this: "{that}.container",
+                method: "mouseout",
+                args: ["{that}.handleUp"]
             },
             "onCreate.bindKeydown": {
-                "this": "{that}.container",
-                "method": "keydown",
-                "args": ["{that}.handleKeydown"]
+                this: "{that}.container",
+                method: "keydown",
+                args: ["{that}.handleKeydown"]
             },
             "onCreate.bindKeyup": {
-                "this": "{that}.container",
-                "method": "keyup",
-                "args": ["{that}.handleKeyup"]
+                this: "{that}.container",
+                method: "keyup",
+                args: ["{that}.handleKeyup"]
             }
         }
     });
@@ -144,7 +157,14 @@
     osk.key.handleDown = function (that, event) {
         if (!that.model.isDeactivated) {
             event.preventDefault();
-            that.applier.change("isDown", true);
+
+            var isShiftHeld = fluid.find(["ShiftLeft", "ShiftRight", "CapsLock"], function (code) {
+                return fluid.get(that.model, ["keyStateRegister", code]);
+            });
+
+            var textToAdd = isShiftHeld ? that.model.shiftLabel : that.model.label;
+
+            that.applier.change("isDown", textToAdd);
         }
     };
 
@@ -198,8 +218,15 @@
         that.applier.change("isDown", isDownValue);
     };
 
+    // Mix-in grades to make the letter keys not display their upper and lower case.
+    fluid.defaults("osk.key.onlyCap", {
+        markup: {
+            container: "<button class='osk-key osk-key-%label'><div class='osk-key-shiftLabel'></div><div class='osk-key-label'>%shiftLabel</div></button>\n"
+        }
+    });
+
+    // Mix-in grade for ultra-wide keys like the space bar.
     fluid.defaults("osk.key.wide", {
-        gradeNames: ["osk.key"],
         markup: {
             container: "<button class='osk-key osk-key-wide osk-key-%label'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></button>\n"
         },
