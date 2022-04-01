@@ -4,18 +4,37 @@
     fluid.defaults("osk.examples.navigable.input", {
         gradeNames: ["fluid.viewComponent"],
         model: {
-            keyStateRegister: {}
+            composition: ""
         },
         invokers: {
-            addText: {
-                funcName: "osk.examples.navigable.input.addText",
-                args: ["{that}.dom.container", "{arguments}.0"]
+            relayFormChange: {
+                funcName: "osk.examples.navigable.input.relayFormChange",
+                args: ["{that}"]
+            }
+        },
+        // TODO: Consider whether fluid-binder would be beneficial here.
+        listeners: {
+            "onCreate.bind": {
+                this: "{that}.container",
+                method: "keydown",
+                args: ["{that}.relayFormChange"]
+            },
+        },
+        modelListeners: {
+            composition: {
+                excludeSource: "init",
+                funcName: "osk.examples.navigable.input.updateText",
+                args: ["{that}"]
             }
         }
     });
 
-    osk.examples.navigable.input.addText = function (container, textToAdd) {
-        container[0].value = container[0].value + textToAdd;
+    osk.examples.navigable.input.updateText = function (that) {
+        that.dom.container[0].value = that.model.composition;
+    };
+
+    osk.examples.navigable.input.relayFormChange = function (that) {
+        that.applier.change("composition", that.dom.container[0].value);
     };
 
     fluid.defaults("osk.examples.navigable", {
@@ -24,6 +43,7 @@
             container: "<div class='osk-examples-navigable'><input type='text' class='osk-form-input'></input><hr/><div class='osk-layout'</div>"
         },
         model: {
+            composition: "",
             keyStateRegister: {}
         },
         selectors: {
@@ -33,31 +53,23 @@
         components: {
             input: {
                 type: "osk.examples.navigable.input",
-                container: "{osk.examples.navigable}.dom.input"
+                container: "{osk.examples.navigable}.dom.input",
+                options: {
+                    model: {
+                        composition: "{osk.examples.navigable}.model.composition"
+                    }
+                }
             },
             qwerty: {
                 type: "osk.layout.qwerty",
                 container: "{osk.examples.navigable}.dom.layout",
                 options: {
                     model: {
+                        composition: "{osk.examples.navigable}.model.composition",
                         keyStateRegister: "{osk.examples.navigable}.model.keyStateRegister"
-                    },
+                    }
                 }
-            }
-        },
-        modelListeners: {
-            "keyStateRegister.*": {
-                excludeSource: "init",
-                funcName: "osk.examples.navigable.typeNewKeys",
-                args: ["{that}", "{change}"]
             }
         }
     });
-
-    osk.examples.navigable.typeNewKeys = function (that, change) {
-        // Key down, and not for example, holding shift while a key is still depressed.
-        if (!change.oldValue && change.value) {
-            that.input.addText(change.value);
-        }
-    };
 })(fluid);

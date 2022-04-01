@@ -52,6 +52,7 @@
         }
     });
 
+    // TODO: Convert the underlying key handler to support an option to disable listening rather than forking the listener like this.
     osk.examples.blanks.handleKeydown = function (that, event) {
         that.applier.change(["keyStateRegister", event.code], true);
 
