@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Custom Text Input Demo</title>
+        <script src="../node_modules/infusion/dist/infusion-all.js"></script>
+
+        <script src="../src/js/key.js"></script>
+        <script src="../src/js/row.js"></script>
+        <script src="../src/js/keyboard.js"></script>
+        <script src="../src/js/keydefs.js"></script>
+        <script src="../src/js/keyboards.js"></script>
+        <script src="../src/js/inputs.js"></script>
+
+        <link rel="stylesheet" href="../src/css/osk.css"/>
+
+        <script src="js/customTextInput.js"></script>
+    </head>
+    <body>
+        <h2>Custom Input Demo</h2>
+
+        <p>This example allows you to enter text into a custom input component using the onscreen keyboard.</p>
+
+        <div class="osk"></div>
+
+        <script>
+            var component = osk.examples.customTextInput(".osk");
+        </script>
+    </body>
+</html>

@@ -34,7 +34,7 @@
     fluid.defaults("osk.blank", {
         gradeNames: ["osk.templateRenderer"],
         markup: {
-            container: "<div class='osk-key osk-key-%label'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></div>\n"
+            container: "<div class='osk-key osk-key-%code'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></div>\n"
         },
 
         events: {
@@ -51,6 +51,7 @@
             isDeactivated: false,
             isDown: false,
             downKeys: {},
+            code: "{that}.options.code",
             label: "{that}.options.label",
             payload: "{that}.options.payload",
             shiftLabel: "{that}.options.shiftLabel",
@@ -82,14 +83,14 @@
                 args: ["{that}"]
             }
         }
-    })
+    });
 
     // A grade that is designed for use in a layout, i.e. that supports navigation between keys.
     fluid.defaults("osk.key", {
         gradeNames: ["osk.blank"],
         action: "text",
         markup: {
-            container: "<button class='osk-key osk-key-%label'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></button>\n"
+            container: "<button class='osk-key osk-key-%code'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></button>\n"
         },
         payload: "{that}.options.label",
         capsPayload: "{that}.options.label",
@@ -193,7 +194,6 @@
                 capsPayload: that.options.capsPayload,
                 code: that.options.code,
                 latch: that.options.latch,
-                modifier: that.options.modifier,
                 payload: that.options.payload,
                 shiftPayload: that.options.shiftPayload
             });
@@ -261,49 +261,56 @@
         payload: "{that}.options.label",
         capsPayload: "@expand:osk.toUpperCase({that}.options.payload)",
         markup: {
-            container: "<button class='osk-key osk-key-%label'><div class='osk-key-shiftLabel'></div><div class='osk-key-label'>%shiftLabel</div></button>\n"
+            container: "<button class='osk-key osk-key-%code'><div class='osk-key-label'>%shiftLabel</div></button>\n"
         }
     });
 
-    // Mix-in grade for ultra-wide keys like the space bar.
-    fluid.defaults("osk.key.wide", {
+    // Mix-in grade for keys without a shift label.
+    fluid.defaults("osk.key.noShiftLabel", {
         markup: {
-            container: "<button class='osk-key osk-key-wide osk-key-%label'><div class='osk-key-shiftLabel'>%shiftLabel</div><div class='osk-key-label'>%label</div></button>\n"
+            container: "<button class='osk-key osk-key-%code'><div class='osk-key-label'>%label</div></button>\n"
+        }
+    });
+
+    // Mix-in grade for the space bar.
+    fluid.defaults("osk.key.space", {
+        markup: {
+            container: "<button class='osk-key osk-key-wide osk-key-%code'><div class='osk-key-label'>%label</div></button>\n"
         },
         invokers: {
             handleKeydown: {
-                funcName: "osk.key.wide.handleKeyDown",
+                funcName: "osk.key.space.handleKeyDown",
                 args: ["{that}", "{arguments}.0", "{that}.handleDown"] //event, callback
             },
             updateFocus: {
-                funcName: "osk.key.wide.updateModelFocus",
+                funcName: "osk.key.space.updateModelFocus",
                 args: ["{that}"]
             }
         },
         modelListeners: {
             focusedCol: {
-                funcName: "osk.key.wide.focus",
+                funcName: "osk.key.space.focus",
                 args: ["{that}"]
             },
             focusedRow: {
-                funcName: "osk.key.wide.focus",
+                funcName: "osk.key.space.focus",
                 args: ["{that}"]
             }
         }
     });
 
-    osk.key.wide.focus = function (that) {
+    osk.key.space.focus = function (that) {
         if (that.model.row === that.model.focusedRow) {
             that.container.focus();
         }
     };
 
-    osk.key.wide.updateModelFocus = function (that) {
+    osk.key.space.updateModelFocus = function (that) {
         that.applier.change("focusedRow", that.model.row);
     };
 
     // TODO: Find a way to get rid of this
-    osk.key.wide.handleKeyDown = function (that, event, callback) {
+    osk.key.space.handleKeyDown = function (that, event, callback) {
 
         var eventCode = fluid.get(event, "code");
         // Arrow handling
@@ -333,168 +340,5 @@
         else {
             osk.key.handleKeyEvent(event,callback);
         }
-    };
-
-    fluid.defaults("osk.row", {
-        gradeNames: ["osk.templateRenderer"],
-
-        markup: {
-            container: "<div class='osk-row'></div>"
-        },
-
-        events: {
-            onAction: null
-        },
-
-        keyDefs: [],
-        rowCols: "{osk.row}.options.keyDefs.length",
-        maxCols: "{osk.row}.options.keyDefs.length",
-        model: {
-            downKeys: {}
-        },
-        dynamicComponents: {
-            keys: {
-                type: "osk.key",
-                container: "{that}.container",
-                sources: "{that}.options.keyDefs",
-                options: {
-                    gradeNames: "{source}.gradeNames",
-
-                    col: "{sourcePath}",
-                    row: "{osk.row}.options.row",
-                    rowCols: "{osk.row}.options.rowCols",
-                    maxCols: "{osk.row}.options.maxCols",
-                    numRows: "{osk.row}.options.numRows",
-
-                    action: "{source}.action",
-                    code: "{source}.code",
-                    label: "{source}.label",
-                    latch: "{source}.latch",
-                    modifier: "{source}.modifier",
-                    payload: "{source}.payload",
-                    shiftLabel: "{source}.shiftLabel",
-                    shiftPayload: "{source}.shiftPayload",
-
-                    model: {
-                        downKeys: "{osk.row}.model.downKeys",
-                        focusedCol: "{osk.row}.model.focusedCol",
-                        focusedRow: "{osk.row}.model.focusedRow",
-                        isDeactivated: "{source}.isDeactivated",
-                    },
-
-                    listeners: {
-                        "onAction.notifyParent": {
-                            func: "{osk.row}.events.onAction.fire",
-                            args: ["{arguments}.0"] // key component
-                        }
-                    }
-                }
-            }
-        }
-    });
-
-    fluid.defaults("osk.layout", {
-        gradeNames: ["osk.templateRenderer"],
-
-        markup: {
-            container: "<div class='osk-layout'</div>"
-        },
-
-        events: {
-            onAction: null,
-        },
-
-        model: {
-            composition: "",
-            downKeys: {},
-            focusedCol: false,
-            focusedRow: false,
-            latchedKeys: {}
-        },
-        rowDefs: [],
-        maxCols: "@expand:osk.layout.maxCols({that.options.rowDefs})",
-        // Needed to avoid trying to expand a single "{" as the start of an IoC expression."
-        mergePolicy: { "rowDefs": "noexpand" },
-        dynamicComponents: {
-            rows: {
-                type: "osk.row",
-                container: "{that}.container",
-                sources: "{that}.options.rowDefs",
-                options: {
-                    numRows: "{osk.layout}.options.rowDefs.length",
-                    row: "{sourcePath}",
-                    model: {
-                        downKeys: "{osk.layout}.model.downKeys",
-                        focusedCol: "{osk.layout}.model.focusedCol",
-                        focusedRow: "{osk.layout}.model.focusedRow"
-                    },
-                    keyDefs: "{source}",
-                    listeners: {
-                        "onAction.notifyParent": {
-                            func: "{osk.layout}.events.onAction.fire",
-                            args: ["{arguments}.0"] // key component
-                        }
-                    }
-                }
-            }
-        },
-        listeners: {
-            onAction: {
-                funcName: "osk.layout.processAction",
-                args: ["{that}", "{arguments}.0"] // actionDef
-            }
-        }
-    });
-
-    osk.layout.maxCols = function (defsArray) {
-        var maxCols = 0;
-        fluid.each(defsArray, function (rowDef) {
-            maxCols = Math.max(maxCols, rowDef.length);
-        });
-        return maxCols;
-    };
-
-    osk.layout.processAction = function (that, actionDef) {
-        if (actionDef.latch) {
-            var isLatched = fluid.get(that.model, ["latchedKeys", actionDef.code]) || false;
-            if (isLatched) {
-                that.applier.change(["downKeys", actionDef.code], false);
-                that.applier.change(["latchedKeys", actionDef.code], false);
-            }
-            else {
-                that.applier.change(["latchedKeys", actionDef.code], actionDef.latch);
-            }
-        }
-        else if (actionDef.action === "text") {
-            var toAdd = actionDef.payload;
-            // TODO: Add handling for control/alt/meta
-            if (that.model.latchedKeys.ShiftLeft || that.model.latchedKeys.ShiftRight ) {
-                toAdd = actionDef.shiftPayload;
-            }
-            else if (that.model.latchedKeys.CapsLock) {
-                toAdd = actionDef.capsPayload;
-            }
-
-            that.applier.change("composition", that.model.composition + toAdd);
-            var updatedLatches = {};
-            fluid.each(that.model.latchedKeys, function (latched, code) {
-                if (latched === "hard") {
-                    updatedLatches[code] = latched;
-                }
-                else {
-                    updatedLatches[code] = false;
-                    that.applier.change(["downKeys", code], false);
-                }
-            });
-            that.applier.change("latchedKeys", updatedLatches);
-        }
-        else if (actionDef.action === "backspace" && that.model.composition.length) {
-            // Remove the last character.
-            that.applier.change("composition", that.model.composition.slice(0, -1));
-        }
-        else if (actionDef.action === "delete") {
-            // TODO: As we have no concept of a cursor position within the overall text yet, we can't implement this yet.
-        }
-        // TODO: Add handling for control, alt, meta
     };
 })(fluid);

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Navigable Keyboard Demo</title>
+        <script src="../node_modules/infusion/dist/infusion-all.js"></script>
+
+        <script src="../src/js/key.js"></script>
+        <script src="../src/js/row.js"></script>
+        <script src="../src/js/keyboard.js"></script>
+        <script src="../src/js/keydefs.js"></script>
+        <script src="../src/js/keyboards.js"></script>
+
+        <link rel="stylesheet" href="../src/css/osk.css"/>
+
+        <script src="js/htmlTextInput.js"></script>
+        <link rel="stylesheet" href="css/htmlTextInput.css"/>
+    </head>
+    <body>
+        <h2>HTML Text Input Demo</h2>
+
+        <p>This example allows you to enter text in an HTML input field using the onscreen keyboard.</p>
+
+        <div class="osk"></div>
+
+        <script>
+            var component = osk.examples.htmlTextInput(".osk");
+        </script>
+    </body>
+</html>

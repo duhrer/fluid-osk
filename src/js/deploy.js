@@ -69,8 +69,8 @@ fluid.defaults("osk.generator", {
     bundle: [
         "./examples",
         "./src/css",
-        "./src/js/layouts.js",
-        "./src/js/osk.js",
+        "./src/js/keyboards.js",
+        "./src/js/key.js",
         "./node_modules/infusion/dist/infusion-all.js"
     ],
     listeners: {

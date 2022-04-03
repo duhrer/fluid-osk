@@ -1,9 +1,9 @@
 (function (fluid) {
     "use strict";
-    fluid.defaults("osk.examples.blanks", {
+    fluid.defaults("osk.examples.feedback", {
         gradeNames: ["fluid.viewComponent"],
         model: {
-            keyStateRegister: {}
+            downKeys: {}
         },
         markup: {
             onlyCap: "<div class='osk-key osk-key-%label'><div class='osk-key-shiftLabel'></div><div class='osk-key-label'>%shiftLabel</div></div>\n",
@@ -26,45 +26,45 @@
         },
         components: {
             keyboard: {
-                type: "osk.layout.qwerty",
+                type: "osk.keyboard.qwerty",
                 container: "{that}.dom.container",
                 options: {
                     model: {
-                        keyStateRegister: "{osk.examples.blanks}.model.keyStateRegister"
+                        downKeys: "{osk.examples.feedback}.model.downKeys"
                     }
                 }
             }
         },
         invokers: {
             "handleKeydown": {
-                funcName: "osk.examples.blanks.handleKeydown",
+                funcName: "osk.examples.feedback.handleKeydown",
                 args: ["{that}", "{arguments}.0"] // event
             },
             "handleKeyup": {
-                funcName: "osk.examples.blanks.handleKeyup",
+                funcName: "osk.examples.feedback.handleKeyup",
                 args: ["{that}", "{arguments}.0"] // event
             }
         },
         listeners: {
             "onCreate.wireKeyboardHandlers": {
-                funcName: "osk.examples.blanks.wireKeyboardHandlers"
+                funcName: "osk.examples.feedback.wireKeyboardHandlers"
             }
         }
     });
 
     // TODO: Convert the underlying key handler to support an option to disable listening rather than forking the listener like this.
-    osk.examples.blanks.handleKeydown = function (that, event) {
-        that.applier.change(["keyStateRegister", event.code], true);
+    osk.examples.feedback.handleKeydown = function (that, event) {
+        that.applier.change(["downKeys", event.code], true);
 
         // Just to avoid navigating out of the demo.
         if (event.code === "Tab") { event.preventDefault(); }
     };
 
-    osk.examples.blanks.handleKeyup = function (that, event) {
-        that.applier.change(["keyStateRegister", event.code], false);
+    osk.examples.feedback.handleKeyup = function (that, event) {
+        that.applier.change(["downKeys", event.code], false);
     };
 
-    osk.examples.blanks.wireKeyboardHandlers = function (that) {
+    osk.examples.feedback.wireKeyboardHandlers = function (that) {
         document.addEventListener("keydown", that.handleKeydown);
         document.addEventListener("keyup", that.handleKeyup);
     };

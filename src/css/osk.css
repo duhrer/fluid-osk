@@ -12,7 +12,7 @@
     width: 3rem;
 }
 
-.osk-key-space {
+.osk-key-Space {
     margin-left: 9rem;
     width: 35rem;
 }
@@ -38,12 +38,69 @@
     width: 4.5rem;
 }
 
+.osk-key-Insert {
+    margin-left: 3.5rem;
+}
+
+.osk-key-Delete {
+    margin-left: 5rem;
+}
+
+.osk-key-ArrowLeft {
+    margin-left: 9.5rem;
+}
+
+.osk-key-ArrowUp {
+    margin-left: 8.5rem;
+}
+
 .osk-key-CapsLock,
 .osk-key-Backspace,
 .osk-key-Enter {
     width: 6rem;
 }
 
-.osk-key-shift {
+.osk-key-ShiftLeft,
+.osk-key-ShiftRight {
     width: 7.5rem;
+}
+
+.osk-text-input {
+    align-items: center;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    font-size: 1.5rem;
+    height: 2rem;
+    padding: 0.25rem;
+}
+
+.osk-text-input-before-cursor {
+    margin-right: 0;
+    padding-right: 0;
+}
+
+.osk-text-input-after-cursor {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.osk-text-input-cursor {
+    -webkit-animation: cursor-animation 1s steps(2, start) infinite;
+    animation: cursor-animation 1s steps(2, start) infinite;
+    background-color: black;
+    height: 2rem;
+    width: 3px;
+}
+
+@keyframes cursor-animation {
+    to {
+        visibility: hidden;
+    }
+}
+
+@-webkit-keyframes cursor-animation {
+    to {
+        visibility: hidden;
+    }
 }
