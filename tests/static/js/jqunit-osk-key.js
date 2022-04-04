@@ -1,23 +1,42 @@
 /* globals jqUnit */
 (function (fluid, jqUnit) {
     "use strict";
+    var osk = fluid.registerNamespace("osk");
 
-    fluid.registerNamespace("fluid.tests.osk");
-    fluid.tests.osk.createFakeEvent = function (eventPayload) {
+    fluid.registerNamespace("osk.tests");
+    osk.tests.createFakeEvent = function (eventPayload) {
         return fluid.extend({ preventDefault: function () {}}, eventPayload);
     };
 
-    fluid.tests.osk.eventTestsForGrade = function (eventTestDefs, gradeToTest) {
+    osk.tests.eventTestsForGrade = function (eventTestDefs, gradeToTest) {
         jqUnit.module("Event tests for '" + gradeToTest + "'");
         fluid.each(eventTestDefs, function (eventTestDef) {
             jqUnit.test(eventTestDef.message, function () {
                 jqUnit.expect(1);
-                var componentInvoker = fluid.getGlobalValue(gradeToTest);
-                var componentToTest = componentInvoker("#qunit-tests", eventTestDef.keyOptions);
-                var fakeEvent = fluid.tests.osk.createFakeEvent(eventTestDef.eventPayload);
+                var componentConstructor = fluid.getGlobalValue(gradeToTest);
+                var componentToTest = componentConstructor("#qunit-tests", eventTestDef.keyOptions);
+                var fakeEvent = osk.tests.createFakeEvent(eventTestDef.eventPayload);
                 componentToTest[eventTestDef.eventInvoker](fakeEvent);
                 var observedValue = fluid.get(componentToTest, eventTestDef.pathToCheck);
                 jqUnit.assertEquals("The value should be as expected.", eventTestDef.expectedValue, observedValue);
+                componentToTest.destroy();
+            });
+        });
+    };
+
+    osk.tests.focusTestsForGrade = function (focusTestDefs, gradeToTest) {
+        jqUnit.module("Focus tests for '" + gradeToTest + "'");
+        fluid.each(focusTestDefs, function (focusTestDef) {
+            jqUnit.test(focusTestDef.message, function () {
+                jqUnit.expect(1);
+                var componentConstructor = fluid.getGlobalValue(gradeToTest);
+                var componentToTest = componentConstructor("#qunit-tests", focusTestDef.keyOptions);
+                // Ordinarily this would be triggered by a model change, we simulate it by calling the same function.
+                osk.key.focus(componentToTest);
+                // Adapted from https://www.codegrepper.com/code-examples/javascript/jQuery+check+element+has+focus
+                var hasFocus = document.activeElement.innerHTML === componentToTest.container.html();
+                var testMessage = focusTestDef.shouldReceiveFocus ? "The component should be focused." : "The component should not be focused.";
+                jqUnit.assertEquals(testMessage, focusTestDef.shouldReceiveFocus, hasFocus);
                 componentToTest.destroy();
             });
         });
@@ -178,10 +197,9 @@
             pathToCheck:   "model.focusedRow",
             expectedValue: 0
         }
-    }
+    };
 
-
-    fluid.tests.osk.eventTestsForGrade(eventTestDefs, "osk.key");
+    osk.tests.eventTestsForGrade(eventTestDefs, "osk.key");
 
     var focusTestDefs = {
         shouldFocus: {
@@ -211,21 +229,8 @@
         }
     };
 
-    jqUnit.module("Focus tests for osk.key");
+    osk.tests.focusTestsForGrade(focusTestDefs, "osk.key");
 
-    fluid.each(focusTestDefs, function (focusTestDef) {
-        jqUnit.test(focusTestDef.message, function () {
-            jqUnit.expect(1);
-            var componentToTest = osk.key("#qunit-tests", focusTestDef.keyOptions);
-            // Ordinarily this would be triggered by a model change, we simulate it by calling the same function.
-            osk.key.focus(componentToTest);
-            // Adapted from https://www.codegrepper.com/code-examples/javascript/jQuery+check+element+has+focus
-            var hasFocus = document.activeElement.innerHTML === componentToTest.container.html();
-            var testMessage = focusTestDef.shouldReceiveFocus ? "The component should be focused." : "The component should not be focused.";
-            jqUnit.assertEquals(testMessage, focusTestDef.shouldReceiveFocus, hasFocus);
-            componentToTest.destroy();
-        });
-    });
 
     jqUnit.module("Space key tests.");
 
@@ -286,5 +291,26 @@
         }
     };
 
-    fluid.tests.osk.eventTestsForGrade(spaceKeyArrowTests, "osk.tests.key.space");
+    osk.tests.eventTestsForGrade(spaceKeyArrowTests, "osk.tests.key.space");
+
+    var spaceKeyFocusTestDefs = {
+        shouldFocus: {
+            message:            "The component should receive focus when the row is correct.",
+            keyOptions:         { code: "X", col: 1, row: 2, model: { focusedCol: 1, focusedRow: 2 } },
+            shouldReceiveFocus: true
+        },
+        wrongCol: {
+            message:            "The component should receive focus when the column is incorrect.",
+            keyOptions:         { code: "Y", col: 5, row: 2, model: { focusedCol: 1, focusedRow: 2 } },
+            shouldReceiveFocus: true
+        },
+        wrongRow: {
+            message:            "The component should not receive focus when the row is incorrect.",
+            keyOptions:         { code: "Z", col: 1, row: 3, model: { focusedCol: 1, focusedRow: 2 } },
+            shouldReceiveFocus: false
+        }
+    };
+
+    osk.tests.focusTestsForGrade(spaceKeyFocusTestDefs, "osk.tests.key.space");
+
 })(fluid, jqUnit);
