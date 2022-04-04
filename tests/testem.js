@@ -10,13 +10,13 @@ var outputFile = fluid.module.resolvePath("%fluid-binder/report.tap");
 fluid.defaults("fluid.test.binder.testem", {
     gradeNames: ["fluid.testem"],
     sourceDirs: {
-        src: "%fluid-binder/src"
+        src: "%fluid-osk/src"
     },
     contentDirs: {
-        tests:   "%fluid-binder/tests"
+        tests:   "%fluid-osk/tests"
     },
     testPages: ["tests/static/all-tests.html"],
-    reportsDir: "%fluid-binder/reports",
+    reportsDir: "%fluid-osk/reports",
     browserArgs: {
         // The `--headless` arg is needed until https://issues.fluid.net/browse/fluid-4145 is resolved.
         //
@@ -29,7 +29,9 @@ fluid.defaults("fluid.test.binder.testem", {
     },
     testemOptions: {
         "report_file": outputFile,
-        "skip": "PhantomJS,Headless Chrome,Safari,IE"
+        // The tests work in Safari, but the runner doesn't work unattended, so we skip it.
+        // The tests work in Opera, but the runner takes ages because of a prompt, so we skip it.
+        "skip": "PhantomJS,Headless Chrome,Opera,Safari,IE"
     }
 });
 

@@ -201,10 +201,12 @@
     };
 
     osk.key.handleUp = function (that, event) {
-        event.preventDefault();
+        if (!that.model.isDeactivated) {
+            event.preventDefault();
 
-        if (!that.options.latch) {
-            that.applier.change("isDown", false);
+            if (!that.options.latch) {
+                that.applier.change("isDown", false);
+            }
         }
     };
 
@@ -309,26 +311,14 @@
         that.applier.change("focusedRow", that.model.row);
     };
 
-    // TODO: Find a way to get rid of this
     osk.key.space.handleKeyDown = function (that, event, callback) {
-
         var eventCode = fluid.get(event, "code");
         // Arrow handling
-        // TODO: Convert these to special actions and move the logic to the layout.
-        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(eventCode) !== -1) {
+        if (["ArrowUp", "ArrowDown"].indexOf(eventCode) !== -1) {
             event.preventDefault();
             that.applier.change("isDown", false);
 
-            if (eventCode === "ArrowLeft") {
-                // Wrap around based on the width of the other rows.
-                var previousCol = that.model.focusedCol > 0 ? that.model.focusedCol - 1 : 15;
-                that.applier.change("focusedCol", previousCol);
-            }
-            else if (eventCode === "ArrowRight") {
-                var nextCol = that.model.focusedCol <  14 ? that.model.focusedCol + 1 : 0;
-                that.applier.change("focusedCol", nextCol);
-            }
-            else if (eventCode === "ArrowUp") {
+            if (eventCode === "ArrowUp") {
                 var previousRow = that.model.focusedRow > 0 ? that.model.focusedRow - 1 : that.options.numRows - 1;
                 that.applier.change("focusedRow", previousRow);
             }
