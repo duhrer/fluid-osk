@@ -38,23 +38,23 @@ components available and their options.
 
 ## Component Invokers
 
-### `{osk.key}.handleKeydown`
+### `{osk.key}.handleKeydown(event)`
 
 Passes `keydown` events for supported keys (`Space` or `Enter`) on to `handleDown`.
 
-### `{osk.key}.handleKeyup`
+### `{osk.key}.handleKeyup(event)`
 
 Passes `keyup` events for supported keys (`Space` or `Enter`) on to `handleUp`.
 
-### `{osk.key}.handleDown`
+### `{osk.key}.handleDown()`
 
 Respond to either a mouse click or key down from a supported key (`Space` or `Enter`).
 
-### `{osk.key}.handleUp`
+### `{osk.key}.handleUp()`
 
 Respond to either releasing a key or the mouse button.
 
-### `{osk.key}.updateFocus`
+### `{osk.key}.updateFocus()`
 
 Check to see if this key should currently have focus, and if so, focus on our container.
 
