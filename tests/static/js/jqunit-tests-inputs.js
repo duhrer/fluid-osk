@@ -186,6 +186,26 @@
             }
         },
 
+        moveCursorForwardToEnd: {
+            message: "It should be possible to move the cursor forward to the end of the string.",
+            componentOptions: {
+                model: {
+                    afterCursor: "e",
+                    beforeCursor: "futur",
+                    composition: "future",
+                    cursorIndex: 5
+                }
+            },
+            invoker: "moveCursor",
+            invokerArgs: [1], // changeInPosition
+            expected: {
+                afterCursor: "",
+                beforeCursor: "future",
+                composition: "future",
+                cursorIndex: 6
+            }
+        },
+
         moveCursorBackwardAtEnd: {
             message: "We should be able to move the cursor backward from the end of the string.",
             componentOptions: {

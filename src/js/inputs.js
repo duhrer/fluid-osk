@@ -109,7 +109,7 @@
 
     osk.inputs.text.moveCursor = function (that, changeInPosition) {
         var newCursorIndex = that.model.cursorIndex + changeInPosition;
-        if (newCursorIndex >= 0 && newCursorIndex < that.model.composition.length) {
+        if (newCursorIndex >= 0 && newCursorIndex <= that.model.composition.length) {
             that.applier.change("cursorIndex", newCursorIndex);
 
             var newBeforeCursor = that.model.composition.slice(0, newCursorIndex);
