@@ -78,11 +78,13 @@
 .osk-text-input-before-cursor {
     margin-right: 0;
     padding-right: 0;
+    white-space: pre;
 }
 
 .osk-text-input-after-cursor {
     margin-left: 0;
     padding-left: 0;
+    white-space: pre;
 }
 
 .osk-text-input-cursor {

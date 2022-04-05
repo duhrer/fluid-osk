@@ -3,6 +3,28 @@
     "use strict";
     var osk = fluid.registerNamespace("osk");
 
+    fluid.defaults("osk.tests.key", {
+        gradeNames: ["osk.key"],
+        model: {
+            actionCount: 0
+        },
+        listeners: {
+            "onAction.updateCount": {
+                funcName: "osk.tests.key.incrementActionCount",
+                args: ["{that}"]
+            }
+        }
+    });
+
+    osk.tests.key.incrementActionCount = function (that) {
+        that.applier.change("actionCount", that.model.actionCount + 1);
+    };
+
+    // osk.key.space is a mix-in, so make a test grade that mixes it in .
+    fluid.defaults("osk.tests.key.space", {
+        gradeNames: ["osk.tests.key", "osk.key.space"]
+    });
+
     fluid.registerNamespace("osk.tests");
     osk.tests.createFakeEvent = function (eventPayload) {
         return fluid.extend({ preventDefault: function () {}}, eventPayload);
@@ -49,7 +71,17 @@
             eventInvoker:  "handleDown",
             eventPayload:  {},
             pathToCheck:   "model.isDown",
-            expectedValue: true
+            expectedValue: true,
+            expectedActionCount: 0
+        },
+        mouseclick: {
+            message:       "Should respond to mouse click.",
+            keyOptions:    { model: { isDown: true }},
+            eventInvoker:  "handleMouseClick",
+            eventPayload:  {},
+            pathToCheck:   "model.isDown",
+            expectedValue: true,
+            expectedActionCount: 1
         },
         mouseup: {
             message:       "Should respond to mouseup.",
@@ -57,7 +89,8 @@
             eventInvoker:  "handleUp",
             eventPayload:  {},
             pathToCheck:   "model.isDown",
-            expectedValue: false
+            expectedValue: false,
+            expectedActionCount: 0
         },
         mousedownDeactivated: {
             message:       "Should not respond to mousedown when deactivated.",
@@ -65,7 +98,8 @@
             eventInvoker:  "handleDown",
             eventPayload:  { code: "Enter" },
             pathToCheck:   "model.isDown",
-            expectedValue: false
+            expectedValue: false,
+            expectedActionCount: 0
         },
         mouseupDeactivated: {
             message:       "Should not respond to mouseup when deactivated.",
@@ -73,7 +107,8 @@
             eventInvoker:  "handleUp",
             eventPayload:  {},
             pathToCheck:   "model.isDown",
-            expectedValue: true
+            expectedValue: true,
+            expectedActionCount: 0
         },
         rightKeydown: {
             message:       "Should respond to keydown.",
@@ -81,7 +116,17 @@
             eventInvoker:  "handleKeydown",
             eventPayload:  { code: "Enter" },
             pathToCheck:   "model.isDown",
-            expectedValue: true
+            expectedValue: true,
+            expectedActionCount: 0
+        },
+        rightKeyClick: {
+            message:       "Should respond to keydown.",
+            keyOptions:    {},
+            eventInvoker:  "handleKeyClick",
+            eventPayload:  { code: "Enter" },
+            pathToCheck:   "model.isDown",
+            expectedValue: false, // The click handler should not change isDown.
+            expectedActionCount: 1
         },
         rightKeyup: {
             message:       "Should respond to keyup.",
@@ -89,7 +134,8 @@
             eventInvoker:  "handleKeyup",
             eventPayload:  { code: "Enter" },
             pathToCheck:   "model.isDown",
-            expectedValue: false
+            expectedValue: false,
+            expectedActionCount: 0
         },
         wrongKeydown: {
             message:       "Should not respond to keydown for ignored key.",
@@ -97,7 +143,8 @@
             eventInvoker:  "handleKeydown",
             eventPayload:  { code: "Tab" },
             pathToCheck:   "model.isDown",
-            expectedValue: false
+            expectedValue: false,
+            expectedActionCount: 0
         },
         wrongKeyup: {
             message:       "Should not respond to keyup for ignored key.",
@@ -105,7 +152,8 @@
             eventInvoker:  "handleKeyup",
             eventPayload:  { code: "Tab" },
             pathToCheck:   "model.isDown",
-            expectedValue: true
+            expectedValue: true,
+            expectedActionCount: 0
         },
         rightKeydownDeactivated: {
             message:       "Should not respond to keydown when deactivated.",
@@ -113,7 +161,8 @@
             eventInvoker:  "handleKeydown",
             eventPayload:  { code: "Space" },
             pathToCheck:   "model.isDown",
-            expectedValue: false
+            expectedValue: false,
+            expectedActionCount: 0
         },
         rightKeyupDeactivated: {
             message:       "Should not respond to keyup when deactivated.",
@@ -121,7 +170,8 @@
             eventInvoker:  "handleKeyup",
             eventPayload:  { code: "Space" },
             pathToCheck:   "model.isDown",
-            expectedValue: false
+            expectedValue: false,
+            expectedActionCount: 0
         },
         latchedMouseup: {
             message:       "A latched key should not respond to mouseup.",
@@ -129,7 +179,8 @@
             eventInvoker:  "handleUp",
             eventPayload:  {},
             pathToCheck:   "model.isDown",
-            expectedValue: true
+            expectedValue: true,
+            expectedActionCount: 0
         },
 
         // Arrow key handling.
@@ -139,7 +190,8 @@
             eventInvoker:  "handleKeydown",
             eventPayload:  { code: "ArrowLeft"},
             pathToCheck:   "model.focusedCol",
-            expectedValue: 1
+            expectedValue: 1,
+            expectedActionCount: 0
         },
         leftArrowWrap: {
             message:       "The left arrow key should wrap around from the first column to the last.",
@@ -147,7 +199,8 @@
             eventInvoker:  "handleKeydown",
             eventPayload:  { code: "ArrowLeft"},
             pathToCheck:   "model.focusedCol",
-            expectedValue: 4
+            expectedValue: 4,
+            expectedActionCount: 0
         },
         rightArrow: {
             message:       "The right arrow key should increase the focused column.",
@@ -155,7 +208,8 @@
             eventInvoker:  "handleKeydown",
             eventPayload:  { code: "ArrowRight"},
             pathToCheck:   "model.focusedCol",
-            expectedValue: 3
+            expectedValue: 3,
+            expectedActionCount: 0
         },
         rightArrowWrap: {
             message:       "The left arrow key should wrap around from the first column to the last.",
@@ -163,7 +217,8 @@
             eventInvoker:  "handleKeydown",
             eventPayload:  { code: "ArrowRight"},
             pathToCheck:   "model.focusedCol",
-            expectedValue: 0
+            expectedValue: 0,
+            expectedActionCount: 0
         },
         upArrow: {
             message:       "The up arrow key should decrease the focused row.",
@@ -171,7 +226,8 @@
             eventInvoker:  "handleKeydown",
             eventPayload:  { code: "ArrowUp"},
             pathToCheck:   "model.focusedRow",
-            expectedValue: 1
+            expectedValue: 1,
+            expectedActionCount: 0
         },
         upArrowWrap: {
             message:       "The up arrow key should wrap around from the first row to the last.",
@@ -179,7 +235,8 @@
             eventInvoker:  "handleKeydown",
             eventPayload:  { code: "ArrowUp"},
             pathToCheck:   "model.focusedRow",
-            expectedValue: 2
+            expectedValue: 2,
+            expectedActionCount: 0
         },
         downArrow: {
             message:       "The down arrow key should increase the focused row.",
@@ -187,7 +244,8 @@
             eventInvoker:  "handleKeydown",
             eventPayload:  { code: "ArrowDown"},
             pathToCheck:   "model.focusedRow",
-            expectedValue: 2
+            expectedValue: 2,
+            expectedActionCount: 0
         },
         downArrowWrap: {
             message:       "The down arrow key should wrap around from the last row to the first.",
@@ -195,7 +253,8 @@
             eventInvoker:  "handleKeydown",
             eventPayload:  { code: "ArrowDown"},
             pathToCheck:   "model.focusedRow",
-            expectedValue: 0
+            expectedValue: 0,
+            expectedActionCount: 0
         }
     };
 
@@ -233,11 +292,6 @@
 
 
     jqUnit.module("Space key tests.");
-
-    // osk.key.space is a mix-in, so make a test grade that mixes it in .
-    fluid.defaults("osk.tests.key.space", {
-        gradeNames: ["osk.key", "osk.key.space"]
-    });
 
     var spaceKeyArrowTests = {
         // Arrow key handling.

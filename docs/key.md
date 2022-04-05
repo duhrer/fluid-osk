@@ -40,17 +40,27 @@ components available and their options.
 
 ### `{osk.key}.handleKeydown(event)`
 
-Passes `keydown` events for supported keys (`Space` or `Enter`) on to `handleDown`.
+Passes `keydown` events for supported keys (`Space` or `Enter`) on to `handleDown`.  This invoker does not result in
+firing an action, but does update the `isDown` variable so that onscreen feedback can be provided.
+
+### `{osk.key}.handleKeyClick(event)`
+
+Although there is no longer a well-supported `keypress`, we need to distinguish three phases for each key press, just
+as we do with mouse down, click, and mouse up.  This invoker handles the "action" part of a `keydown`.
 
 ### `{osk.key}.handleKeyup(event)`
 
 Passes `keyup` events for supported keys (`Space` or `Enter`) on to `handleUp`.
 
-### `{osk.key}.handleDown()`
+### `{osk.key}.handleDown(event)`
 
-Respond to either a mouse click or key down from a supported key (`Space` or `Enter`).
+Respond to a mouse button or (supported) key being held down.
 
-### `{osk.key}.handleUp()`
+### `{osk.key}.handleMouseClick(event)`
+
+Respond to a mouse click, typically by firing an action.
+
+### `{osk.key}.handleUp(event)`
 
 Respond to either releasing a key or the mouse button.
 
