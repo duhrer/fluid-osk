@@ -109,19 +109,21 @@
 
     osk.inputs.text.moveCursor = function (that, changeInPosition) {
         var newCursorIndex = that.model.cursorIndex + changeInPosition;
-        that.applier.change("cursorIndex", newCursorIndex);
+        if (newCursorIndex >= 0 && newCursorIndex < that.model.composition.length) {
+            that.applier.change("cursorIndex", newCursorIndex);
 
-        var newBeforeCursor = that.model.composition.slice(0, newCursorIndex);
-        that.applier.change("beforeCursor", newBeforeCursor);
+            var newBeforeCursor = that.model.composition.slice(0, newCursorIndex);
+            that.applier.change("beforeCursor", newBeforeCursor);
 
-        var newAfterCursor = that.model.composition.slice(newCursorIndex);
-        that.applier.change("afterCursor", newAfterCursor);
+            var newAfterCursor = that.model.composition.slice(newCursorIndex);
+            that.applier.change("afterCursor", newAfterCursor);
+        }
     };
 
     osk.inputs.text.moveCursorToEnd = function (that) {
         that.applier.change("afterCursor", "");
         that.applier.change("beforeCursor", that.model.composition);
-        that.applier.change("cursorIndex", Math.max(that.model.composition.length - 1, 0));
+        that.applier.change("cursorIndex", that.model.composition.length);
     };
 
     osk.inputs.text.moveCursorToStart = function (that) {
@@ -131,16 +133,20 @@
     };
 
     osk.inputs.text.removeNextChar = function (that) {
-        var newAfterCursor = that.model.afterCursor.slice(1);
-        that.applier.change("afterCursor", newAfterCursor);
-        that.applier.change("composition", that.model.beforeCursor + newAfterCursor);
+        if (that.model.cursorIndex < that.model.composition.length) {
+            var newAfterCursor = that.model.afterCursor.slice(1);
+            that.applier.change("afterCursor", newAfterCursor);
+            that.applier.change("composition", that.model.beforeCursor + newAfterCursor);
+        }
     };
 
     osk.inputs.text.removePreviousChar = function (that) {
-        var newBeforeCursor = that.model.beforeCursor.slice(0, -1);
-        that.applier.change("beforeCursor", newBeforeCursor);
-        that.applier.change("composition", newBeforeCursor + that.model.afterCursor);
-        that.applier.change("cursorIndex", that.model.cursorIndex - 1);
+        if (that.model.cursorIndex > 0) {
+            var newBeforeCursor = that.model.beforeCursor.slice(0, -1);
+            that.applier.change("beforeCursor", newBeforeCursor);
+            that.applier.change("composition", newBeforeCursor + that.model.afterCursor);
+            that.applier.change("cursorIndex", that.model.cursorIndex - 1);
+        }
     };
 
     // TODO: Make a text area equivalent if needed/requested.

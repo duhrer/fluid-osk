@@ -5,7 +5,7 @@ var fluid = require("infusion");
 require("../");
 require("fluid-testem");
 
-var outputFile = fluid.module.resolvePath("%fluid-binder/report.tap");
+var outputFile = fluid.module.resolvePath("%fluid-osk/report.tap");
 
 fluid.defaults("fluid.test.binder.testem", {
     gradeNames: ["fluid.testem"],
