@@ -24,10 +24,10 @@
         "infusion": "4.0.0"
     },
     "devDependencies": {
-        "eslint": "8.11.0",
+        "eslint": "8.12.0",
         "eslint-config-fluid": "2.0.1",
-        "fluid-lint-all": "1.1.5",
+        "fluid-lint-all": "1.2.0-dev.20220406T090428Z.64f3edd.GH-48",
         "fluid-testem": "2.1.15",
-        "recursive-copy": "^2.0.14"
+        "recursive-copy": "2.0.14"
     }
 }
