@@ -20,7 +20,8 @@
             latchedKeys: {}
         },
         rowDefs: [],
-        maxCols: "@expand:osk.keyboard.maxCols({that.options.rowDefs})",
+        numRows: "{osk.keyboard}.options.rowDefs.length",
+        maxCols: "@expand:osk.keyboard.maxCols({that}.options.rowDefs)",
         // Needed to avoid trying to expand a single "{" as the start of an IoC expression."
         mergePolicy: { "rowDefs": "noexpand" },
         dynamicComponents: {
@@ -29,7 +30,6 @@
                 container: "{that}.container",
                 sources: "{that}.options.rowDefs",
                 options: {
-                    numRows: "{osk.keyboard}.options.rowDefs.length",
                     row: "{sourcePath}",
                     model: {
                         downKeys: "{osk.keyboard}.model.downKeys",
@@ -46,10 +46,37 @@
                 }
             }
         },
+        invokers: {
+            handleKeydown: {
+                funcName: "osk.keyboard.handleKeyDown",
+                args: ["{that}", "{arguments}.0"] // event
+            },
+            moveToNextCol: {
+                funcName: "osk.keyboard.moveToNextCol",
+                args: ["{that}"]
+            },
+            moveToNextRow: {
+                funcName: "osk.keyboard.moveToNextRow",
+                args: ["{that}"]
+            },
+            moveToPreviousCol: {
+                funcName: "osk.keyboard.moveToPreviousCol",
+                args: ["{that}"]
+            },
+            moveToPreviousRow: {
+                funcName: "osk.keyboard.moveToPreviousRow",
+                args: ["{that}"]
+            }
+        },
         listeners: {
             "onAction.handleLatches": {
                 funcName: "osk.keyboard.processAction",
                 args: ["{that}", "{arguments}.0"] // actionDef
+            },
+            "onCreate.bindKeyDown": {
+                this: "{that}.container",
+                method: "keydown",
+                args: ["{that}.handleKeydown"]
             }
         }
     });
@@ -86,5 +113,46 @@
             });
             that.applier.change("latchedKeys", updatedLatches);
         }
+    };
+
+    osk.keyboard.handleKeyDown = function (that, event) {
+        // Arrow navigation handling
+        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.code) !== -1) {
+            event.preventDefault();
+
+            if (event.code === "ArrowLeft") {
+                that.moveToPreviousCol();
+            }
+            else if (event.code === "ArrowRight") {
+                that.moveToNextCol();
+            }
+            else if (event.code === "ArrowUp") {
+                that.moveToPreviousRow();
+            }
+            else if (event.code === "ArrowDown") {
+                that.moveToNextRow();
+            }
+        }
+    };
+
+    osk.keyboard.moveToNextCol = function (that) {
+        var nextCol = that.model.focusedCol <  that.options.maxCols - 1 ? that.model.focusedCol + 1 : 0;
+        that.applier.change("focusedCol", nextCol);
+    };
+
+
+    osk.keyboard.moveToNextRow = function (that) {
+        var nextRow = that.model.focusedRow < that.options.numRows - 1 ? that.model.focusedRow + 1 : 0;
+        that.applier.change("focusedRow", nextRow);
+    };
+
+    osk.keyboard.moveToPreviousCol = function (that) {
+        var previousCol = that.model.focusedCol > 0 ? that.model.focusedCol - 1 : that.options.maxCols - 1;
+        that.applier.change("focusedCol", previousCol);
+    };
+
+    osk.keyboard.moveToPreviousRow = function (that) {
+        var previousRow = that.model.focusedRow > 0 ? that.model.focusedRow - 1 : that.options.numRows - 1;
+        that.applier.change("focusedRow", previousRow);
     };
 })(fluid);

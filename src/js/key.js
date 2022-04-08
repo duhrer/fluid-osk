@@ -96,6 +96,11 @@
         capsPayload: "{that}.options.label",
         shiftPayload: "{that}.options.shiftLabel",
 
+        startCol: "{that}.options.col",
+        endCol: "{that}.options.col",
+        startRow: "{that}.options.row",
+        endRow: "{that}.options.row",
+
         model: {
             col: "{that}.options.col",
             row: "{that}.options.row",
@@ -114,7 +119,7 @@
         },
         invokers: {
             handleKeydown: {
-                funcName: "osk.key.handleKeyDown",
+                funcName: "osk.key.handleKeyEvent",
                 args: ["{that}", "{arguments}.0", "{that}.handleDown"] //event, callback
             },
             handleKeyup: {
@@ -126,8 +131,8 @@
                 args: ["{that}", "{arguments}.0"] // event
             },
             handleMouseClick: {
-                funcName: "osk.key.handleClick",
-                args: ["{that}", "{arguments}.0", true] // event, preventDefault
+                funcName: "osk.key.handleActionEvent",
+                args: ["{that}", "{arguments}.0"] // event
             },
             handleKeyClick: {
                 funcName: "osk.key.handleKeyClick",
@@ -188,11 +193,22 @@
     });
 
     osk.key.focus = function (that) {
-        if (that.model.row === that.model.focusedRow) {
-            var isLastColumn = that.model.col === that.options.rowCols - 1;
-            if (that.model.col === that.model.focusedCol || isLastColumn && that.model.focusedCol > that.model.col) {
-                that.container.focus();
+        var shouldFocus = false;
+        if (that.model.focusedRow >= that.options.startRow && that.model.focusedRow <= that.options.endRow) {
+            var isLastColumn = that.options.endCol === that.options.rowCols - 1;
+            if (
+                (that.model.focusedCol >= that.options.startCol && that.model.focusedCol <= that.options.endCol) ||
+                (isLastColumn && that.model.focusedCol > that.options.endCol)
+            ) {
+                shouldFocus = true;
             }
+        }
+
+        if (shouldFocus) {
+            that.container.focus();
+        }
+        else if (!that.options.latch) {
+            that.applier.change("isDown", false);
         }
     };
 
@@ -212,15 +228,13 @@
     osk.key.handleKeyClick = function (that, event) {
         var eventCode = fluid.get(event, "code");
         if (eventCode === "Space" || eventCode === "Enter") {
-            osk.key.handleClick(that, event, false);
+            osk.key.handleActionEvent(that, event, true);
         }
     };
 
-    osk.key.handleClick = function (that, event, preventDefault) {
+    osk.key.handleActionEvent = function (that, event) {
         if (!that.model.isDeactivated) {
-            if (preventDefault) {
-                event.preventDefault();
-            }
+            event.preventDefault();
 
             that.events.onAction.fire({
                 action: that.options.action,
@@ -247,41 +261,6 @@
         var eventCode = fluid.get(event, "code");
         if (eventCode === "Space" || eventCode === "Enter") {
             callback(event);
-        }
-    };
-
-    osk.key.handleKeyDown = function (that, event, callback) {
-        var eventCode = fluid.get(event, "code");
-        // TODO: Make the navigable grade use this key handler first and pass on to the other function if it's not
-        // an arrow key we're seeing.
-
-        // Arrow handling
-        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(eventCode) !== -1) {
-            event.preventDefault();
-
-            if (!that.options.latch) {
-                that.applier.change("isDown", false);
-            }
-
-            if (eventCode === "ArrowLeft") {
-                var previousCol = that.model.focusedCol > 0 ? that.model.focusedCol - 1 : that.options.rowCols - 1;
-                that.applier.change("focusedCol", previousCol);
-            }
-            else if (eventCode === "ArrowRight") {
-                var nextCol = that.model.focusedCol <  that.options.rowCols - 1 ? that.model.focusedCol + 1 : 0;
-                that.applier.change("focusedCol", nextCol);
-            }
-            else if (eventCode === "ArrowUp") {
-                var previousRow = that.model.focusedRow > 0 ? that.model.focusedRow - 1 : that.options.numRows - 1;
-                that.applier.change("focusedRow", previousRow);
-            }
-            else if (eventCode === "ArrowDown") {
-                var nextRow = that.model.focusedRow < that.options.numRows - 1 ? that.model.focusedRow + 1 : 0;
-                that.applier.change("focusedRow", nextRow);
-            }
-        }
-        else {
-            osk.key.handleKeyEvent(event,callback);
         }
     };
 
@@ -317,57 +296,15 @@
             container: "<button class='osk-key osk-key-wide osk-key-%code'><div class='osk-key-label'>%label</div></button>\n"
         },
         invokers: {
-            handleKeydown: {
-                funcName: "osk.key.space.handleKeyDown",
-                args: ["{that}", "{arguments}.0", "{that}.handleDown"] //event, callback
-            },
             updateFocus: {
                 funcName: "osk.key.space.updateModelFocus",
-                args: ["{that}"]
-            }
-        },
-        modelListeners: {
-            focusedCol: {
-                funcName: "osk.key.space.focus",
-                args: ["{that}"]
-            },
-            focusedRow: {
-                funcName: "osk.key.space.focus",
                 args: ["{that}"]
             }
         }
     });
 
-    osk.key.space.focus = function (that) {
-        if (that.model.row === that.model.focusedRow) {
-            that.container.focus();
-        }
-    };
 
     osk.key.space.updateModelFocus = function (that) {
         that.applier.change("focusedRow", that.model.row);
-    };
-
-    osk.key.space.handleKeyDown = function (that, event, callback) {
-        var eventCode = fluid.get(event, "code");
-        // Arrow handling
-        if (["ArrowUp", "ArrowDown"].indexOf(eventCode) !== -1) {
-            event.preventDefault();
-            if (!that.options.latch) {
-                that.applier.change("isDown", false);
-            }
-
-            if (eventCode === "ArrowUp") {
-                var previousRow = that.model.focusedRow > 0 ? that.model.focusedRow - 1 : that.options.numRows - 1;
-                that.applier.change("focusedRow", previousRow);
-            }
-            else if (eventCode === "ArrowDown") {
-                var nextRow = that.model.focusedRow < that.options.numRows - 1 ? that.model.focusedRow + 1 : 0;
-                that.applier.change("focusedRow", nextRow);
-            }
-        }
-        else {
-            osk.key.handleKeyEvent(event,callback);
-        }
     };
 })(fluid);
