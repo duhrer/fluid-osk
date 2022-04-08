@@ -109,10 +109,12 @@
         },
         modelListeners: {
             focusedCol: {
+                excludeSource: "init",
                 funcName: "osk.key.focus",
                 args: ["{that}"]
             },
             focusedRow: {
+                excludeSource: "init",
                 funcName: "osk.key.focus",
                 args: ["{that}"]
             }
@@ -120,7 +122,7 @@
         invokers: {
             handleKeydown: {
                 funcName: "osk.key.handleKeyEvent",
-                args: ["{that}", "{arguments}.0", "{that}.handleDown"] //event, callback
+                args: ["{arguments}.0", "{that}.handleDown"] //event, callback
             },
             handleKeyup: {
                 funcName: "osk.key.handleKeyEvent",
@@ -134,6 +136,7 @@
                 funcName: "osk.key.handleActionEvent",
                 args: ["{that}", "{arguments}.0"] // event
             },
+
             handleKeyClick: {
                 funcName: "osk.key.handleKeyClick",
                 args: ["{that}", "{arguments}.0"] // event

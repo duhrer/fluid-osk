@@ -76,11 +76,11 @@
         },
         mouseclick: {
             message:       "Should respond to mouse click.",
-            keyOptions:    { model: { isDown: true }},
+            keyOptions:    {},
             eventInvoker:  "handleMouseClick",
             eventPayload:  {},
             pathToCheck:   "model.isDown",
-            expectedValue: true,
+            expectedValue: false, // click doesn't set down any longer.
             expectedActionCount: 1
         },
         mouseup: {
@@ -120,7 +120,7 @@
             expectedActionCount: 0
         },
         rightKeyClick: {
-            message:       "Should respond to keydown.",
+            message:       "Should respond to key click.",
             keyOptions:    {},
             eventInvoker:  "handleKeyClick",
             eventPayload:  { code: "Enter" },
@@ -181,80 +181,6 @@
             pathToCheck:   "model.isDown",
             expectedValue: true,
             expectedActionCount: 0
-        },
-
-        // Arrow key handling.
-        leftArrow: {
-            message:       "The left arrow key should decrease the focused column.",
-            keyOptions:    { rowCols: 5, model: { focusedCol: 2 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowLeft"},
-            pathToCheck:   "model.focusedCol",
-            expectedValue: 1,
-            expectedActionCount: 0
-        },
-        leftArrowWrap: {
-            message:       "The left arrow key should wrap around from the first column to the last.",
-            keyOptions:    { rowCols: 5, model: { focusedCol: 0 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowLeft"},
-            pathToCheck:   "model.focusedCol",
-            expectedValue: 4,
-            expectedActionCount: 0
-        },
-        rightArrow: {
-            message:       "The right arrow key should increase the focused column.",
-            keyOptions:    { rowCols: 5, model: { focusedCol: 2 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowRight"},
-            pathToCheck:   "model.focusedCol",
-            expectedValue: 3,
-            expectedActionCount: 0
-        },
-        rightArrowWrap: {
-            message:       "The left arrow key should wrap around from the first column to the last.",
-            keyOptions:    { rowCols: 5, model: { focusedCol: 4 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowRight"},
-            pathToCheck:   "model.focusedCol",
-            expectedValue: 0,
-            expectedActionCount: 0
-        },
-        upArrow: {
-            message:       "The up arrow key should decrease the focused row.",
-            keyOptions:    { numRows: 3, model: { focusedRow: 2 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowUp"},
-            pathToCheck:   "model.focusedRow",
-            expectedValue: 1,
-            expectedActionCount: 0
-        },
-        upArrowWrap: {
-            message:       "The up arrow key should wrap around from the first row to the last.",
-            keyOptions:    { numRows: 3, model: { focusedRow: 0 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowUp"},
-            pathToCheck:   "model.focusedRow",
-            expectedValue: 2,
-            expectedActionCount: 0
-        },
-        downArrow: {
-            message:       "The down arrow key should increase the focused row.",
-            keyOptions:    { numRows: 3, model: { focusedRow: 1 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowDown"},
-            pathToCheck:   "model.focusedRow",
-            expectedValue: 2,
-            expectedActionCount: 0
-        },
-        downArrowWrap: {
-            message:       "The down arrow key should wrap around from the last row to the first.",
-            keyOptions:    { numRows: 3, model: { focusedRow: 2 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowDown"},
-            pathToCheck:   "model.focusedRow",
-            expectedValue: 0,
-            expectedActionCount: 0
         }
     };
 
@@ -289,82 +215,4 @@
     };
 
     osk.tests.focusTestsForGrade(focusTestDefs, "osk.key");
-
-
-    jqUnit.module("Space key tests.");
-
-    var spaceKeyArrowTests = {
-        // Arrow key handling.
-        leftArrow: {
-            message:       "The left arrow key should do nothing.",
-            keyOptions:    { rowCols: 5, model: { focusedCol: 2 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowLeft"},
-            pathToCheck:   "model.focusedCol",
-            expectedValue: 2
-        },
-        rightArrow: {
-            message:       "The right arrow key should do nothing.",
-            keyOptions:    { rowCols: 5, model: { focusedCol: 2 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowRight"},
-            pathToCheck:   "model.focusedCol",
-            expectedValue: 2
-        },
-        upArrow: {
-            message:       "The up arrow key should decrease the focused row.",
-            keyOptions:    { numRows: 3, model: { focusedRow: 2 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowUp"},
-            pathToCheck:   "model.focusedRow",
-            expectedValue: 1
-        },
-        upArrowWrap: {
-            message:       "The up arrow key should wrap around from the first row to the last.",
-            keyOptions:    { numRows: 3, model: { focusedRow: 0 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowUp"},
-            pathToCheck:   "model.focusedRow",
-            expectedValue: 2
-        },
-        downArrow: {
-            message:       "The down arrow key should increase the focused row.",
-            keyOptions:    { numRows: 3, model: { focusedRow: 1 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowDown"},
-            pathToCheck:   "model.focusedRow",
-            expectedValue: 2
-        },
-        downArrowWrap: {
-            message:       "The down arrow key should wrap around from the last row to the first.",
-            keyOptions:    { numRows: 3, model: { focusedRow: 2 }},
-            eventInvoker:  "handleKeydown",
-            eventPayload:  { code: "ArrowDown"},
-            pathToCheck:   "model.focusedRow",
-            expectedValue: 0
-        }
-    };
-
-    osk.tests.eventTestsForGrade(spaceKeyArrowTests, "osk.tests.key.space");
-
-    var spaceKeyFocusTestDefs = {
-        shouldFocus: {
-            message:            "The component should receive focus when the row is correct.",
-            keyOptions:         { code: "X", col: 1, row: 2, model: { focusedCol: 1, focusedRow: 2 } },
-            shouldReceiveFocus: true
-        },
-        wrongCol: {
-            message:            "The component should receive focus when the column is incorrect.",
-            keyOptions:         { code: "Y", col: 5, row: 2, model: { focusedCol: 1, focusedRow: 2 } },
-            shouldReceiveFocus: true
-        },
-        wrongRow: {
-            message:            "The component should not receive focus when the row is incorrect.",
-            keyOptions:         { code: "Z", col: 1, row: 3, model: { focusedCol: 1, focusedRow: 2 } },
-            shouldReceiveFocus: false
-        }
-    };
-
-    osk.tests.focusTestsForGrade(spaceKeyFocusTestDefs, "osk.tests.key.space");
-
 })(fluid, jqUnit);
