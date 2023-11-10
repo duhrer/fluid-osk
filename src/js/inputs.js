@@ -18,7 +18,6 @@
         }
     });
 
-    // TODO: Make a demonstration for this.
     // TODO: Styles for everything, especially cursor and enclosing container.
     fluid.defaults("osk.inputs.text", {
         gradeNames: ["osk.templateRenderer"],
@@ -89,63 +88,87 @@
     });
 
     osk.inputs.text.addChar = function (that, charToAdd, isInsert) {
+        var transaction = that.applier.initiate();
+
         var newBeforeCursor = that.model.beforeCursor + charToAdd;
-        that.applier.change("beforeCursor", newBeforeCursor);
+        transaction.fireChangeRequest({ path:"beforeCursor", value: newBeforeCursor});
 
         if (isInsert) {
             var newAfterCursor = that.model.afterCursor.slice(1);
-            that.applier.change("afterCursor", newAfterCursor);
+            transaction.fireChangeRequest({ path: "afterCursor", value: newAfterCursor});
 
             var compositionAfterInsert = newBeforeCursor + newAfterCursor;
-            that.applier.change("composition", compositionAfterInsert);
+            transaction.fireChangeRequest({ path: "composition", value: compositionAfterInsert, source: "local"});
         }
         else {
             var newComposition = newBeforeCursor + that.model.afterCursor;
-            that.applier.change("composition", newComposition);
+            transaction.fireChangeRequest({ path: "composition", value: newComposition, source: "local"});
         }
 
-        that.applier.change("cursorIndex", that.model.cursorIndex + 1);
+        transaction.fireChangeRequest({ path: "cursorIndex", value: that.model.cursorIndex + 1 });
+
+        transaction.commit();
     };
 
     osk.inputs.text.moveCursor = function (that, changeInPosition) {
         var newCursorIndex = that.model.cursorIndex + changeInPosition;
         if (newCursorIndex >= 0 && newCursorIndex <= that.model.composition.length) {
-            that.applier.change("cursorIndex", newCursorIndex);
+            var transaction = that.applier.initiate();
+
+            transaction.fireChangeRequest({ path: "cursorIndex", value: newCursorIndex });
 
             var newBeforeCursor = that.model.composition.slice(0, newCursorIndex);
-            that.applier.change("beforeCursor", newBeforeCursor);
+            transaction.fireChangeRequest({ path: "beforeCursor", value: newBeforeCursor});
 
             var newAfterCursor = that.model.composition.slice(newCursorIndex);
-            that.applier.change("afterCursor", newAfterCursor);
+            transaction.fireChangeRequest({path: "afterCursor", value: newAfterCursor});
+
+            transaction.commit();
         }
     };
 
     osk.inputs.text.moveCursorToEnd = function (that) {
-        that.applier.change("afterCursor", "");
-        that.applier.change("beforeCursor", that.model.composition);
-        that.applier.change("cursorIndex", that.model.composition.length);
+        var transaction = that.applier.initiate();
+
+        transaction.fireChangeRequest({path: "afterCursor", value: ""});
+        transaction.fireChangeRequest({path: "beforeCursor", value: that.model.composition});
+        transaction.fireChangeRequest({path: "cursorIndex", value: that.model.composition.length});
+
+        transaction.commit();
     };
 
     osk.inputs.text.moveCursorToStart = function (that) {
-        that.applier.change("afterCursor", that.model.composition);
-        that.applier.change("beforeCursor", "");
-        that.applier.change("cursorIndex", 0);
+        var transaction = that.applier.initiate();
+
+        transaction.fireChangeRequest({path: "afterCursor", value: that.model.composition});
+        transaction.fireChangeRequest({path: "beforeCursor", value: ""});
+        transaction.fireChangeRequest({path: "cursorIndex", value: 0});
+
+        transaction.commit();
     };
 
     osk.inputs.text.removeNextChar = function (that) {
         if (that.model.cursorIndex < that.model.composition.length) {
+            var transaction = that.applier.initiate();
+
             var newAfterCursor = that.model.afterCursor.slice(1);
-            that.applier.change("afterCursor", newAfterCursor);
-            that.applier.change("composition", that.model.beforeCursor + newAfterCursor);
+            transaction.fireChangeRequest({path: "afterCursor", value: newAfterCursor});
+            transaction.fireChangeRequest({path: "composition", value: that.model.beforeCursor + newAfterCursor, source: "local"});
+
+            transaction.commit();
         }
     };
 
     osk.inputs.text.removePreviousChar = function (that) {
         if (that.model.cursorIndex > 0) {
+            var transaction = that.applier.initiate();
+
             var newBeforeCursor = that.model.beforeCursor.slice(0, -1);
-            that.applier.change("beforeCursor", newBeforeCursor);
-            that.applier.change("composition", newBeforeCursor + that.model.afterCursor);
-            that.applier.change("cursorIndex", that.model.cursorIndex - 1);
+            transaction.fireChangeRequest({path: "beforeCursor", value: newBeforeCursor});
+            transaction.fireChangeRequest({path: "composition", value: (newBeforeCursor + that.model.afterCursor), source: "local"});
+            transaction.fireChangeRequest({path: "cursorIndex", value: that.model.cursorIndex - 1 });
+
+            transaction.commit();
         }
     };
 
