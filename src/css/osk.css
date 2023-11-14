@@ -4,19 +4,18 @@
 }
 
 /*
-3 rem = clamp(2rem, 2vw, 0.25em);
-1 rem = clamp(.66rem, .66vw, .083rem
+    3 rem = clamp(2rem, 2vw, 0.25em);
+    1 rem = clamp(.66rem, .66vw, .083rem
 */
-
 
 .osk-key {
     border: 1px solid #999;
     border-radius: clamp(2px, 0.25vw, 10px);
     font-size: clamp(0.125rem, 1vw, 1rem);
-    height: clamp(.5rem, 3vw, 3rem);
-    margin: clamp(.125rem, 0.5vw, 1rem);
-    padding: clamp(.125rem, 0.5vw, 0.5rem);
-    width: clamp(.5rem, 3vw, 3rem);
+    height: clamp(0.5rem, 3vw, 3rem);
+    margin: clamp(0.125rem, 0.5vw, 1rem);
+    padding: clamp(0.125rem, 0.5vw, 0.5rem);
+    width: clamp(0.5rem, 3vw, 3rem);
 }
 
 .osk-key-Space {
@@ -34,23 +33,23 @@
 
 .osk-key-shiftLabel,
 .osk-key-label {
-    height: clamp(.16rem, 1vw, 1rem);
-    line-height: clamp(.2rem, 1vw, 1rem);
+    height: clamp(0.16rem, 1vw, 1rem);
+    line-height: clamp(0.2rem, 1vw, 1rem);
     margin: 0;
     padding: 0;
 }
 
 .osk-key-Tab,
 .osk-key-\\ {
-    width: clamp(.75rem, 4.5vw, 4.5rem);
+    width: clamp(0.75rem, 4.5vw, 4.5rem);
 }
 
 .osk-key-Insert {
-    margin-left: clamp(.5rem, 3.5vw, 3.5rem);
+    margin-left: clamp(0.5rem, 3.5vw, 3.5rem);
 }
 
 .osk-key-Delete {
-    margin-left: clamp(1rem, 6vw, 6rem)
+    margin-left: clamp(1rem, 6vw, 6rem);
 }
 
 .osk-key-ArrowLeft {
@@ -58,7 +57,7 @@
 }
 
 .osk-key-ArrowUp {
-    margin-left: clamp(1.5rem, 9vw, 9rem)
+    margin-left: clamp(1.5rem, 9vw, 9rem);
 }
 
 .osk-key-CapsLock,
