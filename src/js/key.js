@@ -178,7 +178,7 @@
 
     osk.key.focus = function (that) {
         var shouldFocus = false;
-        if (that.model.focusedRow >= that.options.startRow && that.model.focusedRow <= that.options.endRow) {
+        if (that.model.focusedRow === that.options.row) {
             var isLastColumn = that.options.endCol === that.options.rowCols - 1;
             if (
                 (that.model.focusedCol >= that.options.startCol && that.model.focusedCol <= that.options.endCol) ||
@@ -189,7 +189,7 @@
         }
 
         if (shouldFocus) {
-            that.container.focus();
+            that.container[0].focus();
         }
         else if (!that.options.latch) {
             that.applier.change("isDown", false);
