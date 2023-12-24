@@ -89,6 +89,11 @@
             focusedRow: false
         },
         modelListeners: {
+            arrowNav: {
+                excludeSource: "init",
+                funcName: "osk.key.focus",
+                args: ["{that}"]
+            },
             focusedCol: {
                 excludeSource: "init",
                 funcName: "osk.key.focus",
@@ -186,6 +191,13 @@
             ) {
                 shouldFocus = true;
             }
+        }
+
+        if (that.model.arrowNav && !shouldFocus) {
+            that.container[0].setAttribute("tabindex", -1);
+        }
+        else {
+            that.container[0].removeAttribute("tabindex");
         }
 
         if (shouldFocus) {

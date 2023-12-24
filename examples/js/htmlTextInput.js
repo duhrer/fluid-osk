@@ -1,6 +1,8 @@
 (function (fluid) {
     "use strict";
 
+    var osk = fluid.registerNamespace("osk");
+
     fluid.defaults("osk.examples.htmlTextInput.input", {
         gradeNames: ["fluid.viewComponent"],
         model: {

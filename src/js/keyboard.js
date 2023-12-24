@@ -14,6 +14,7 @@
         },
 
         model: {
+            arrowNav: false,
             downKeys: {},
             focusedCol: false,
             focusedRow: false,
@@ -32,6 +33,7 @@
                 options: {
                     row: "{sourcePath}",
                     model: {
+                        arrowNav: "{osk.keyboard}.model.arrowNav",
                         downKeys: "{osk.keyboard}.model.downKeys",
                         focusedCol: "{osk.keyboard}.model.focusedCol",
                         focusedRow: "{osk.keyboard}.model.focusedRow"

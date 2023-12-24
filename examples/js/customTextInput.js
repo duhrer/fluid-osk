@@ -1,19 +1,23 @@
 (function (fluid) {
     "use strict";
 
+    var osk = fluid.registerNamespace("osk");
+
     fluid.defaults("osk.examples.customTextInput", {
         gradeNames: ["osk.templateRenderer"],
 
         markup: {
-            container: "<div class='osk-examples-customTextInput'><div class='osk-custom-input'></div><hr/><div class='osk-keyboards-container'><div class='osk-keyboard'></div></div>"
+            container: "<div class='osk-examples-customTextInput'><div class='osk-custom-input'></div><hr/><div class='osk-keyboards-container'><div class='osk-keyboard'></div><div class='osk-controls'></div></div>"
         },
 
         selectors: {
             input: ".osk-custom-input",
-            keyboard: ".osk-keyboard"
+            keyboard: ".osk-keyboard",
+            controls: ".osk-controls"
         },
 
         model: {
+            arrowNav: false,
             latchedKeys: {}
         },
 
@@ -35,6 +39,7 @@
                 container: "{osk.examples.customTextInput}.dom.keyboard",
                 options: {
                     model: {
+                        arrowNav: "{osk.examples.customTextInput}.model.arrowNav",
                         latchedKeys: "{osk.examples.customTextInput}.model.latchedKeys"
                     },
                     listeners: {
@@ -43,6 +48,15 @@
                             funcName: "osk.examples.customTextInput.processAction",
                             args: ["{that}", "{osk.inputs.text}", "{arguments}.0"] // inputComponent, actionDef
                         }
+                    }
+                }
+            },
+            controls: {
+                type: "osk.ui.toggle",
+                container: "{osk.examples.customTextInput}.dom.controls",
+                options: {
+                    model: {
+                        checked: "{osk.examples.customTextInput}.model.arrowNav"
                     }
                 }
             }

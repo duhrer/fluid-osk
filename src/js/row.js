@@ -42,6 +42,7 @@
                     shiftPayload: "{source}.shiftPayload",
 
                     model: {
+                        arrowNav: "{osk.row}.model.arrowNav",
                         downKeys: "{osk.row}.model.downKeys",
                         focusedCol: "{osk.row}.model.focusedCol",
                         focusedRow: "{osk.row}.model.focusedRow",
