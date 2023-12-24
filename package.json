@@ -1,0 +1,33 @@
+{
+    "name": "fluid-osk",
+    "version": "0.1.0",
+    "description": "Fluid On-screen Keyboard",
+    "main": "index.js",
+    "scripts": {
+        "lint": "fluid-lint-all",
+        "test": "testem --file tests/testem.js ci"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/duhrer/fluid-osk.git"
+    },
+    "keywords": [
+        "Accessibility"
+    ],
+    "author": "Tony Atkins <duhrer@gmail.com>",
+    "license": "BSD-3-Clause",
+    "bugs": {
+        "url": "https://github.com/duhrer/fluid-osk/issues"
+    },
+    "homepage": "https://github.com/duhrer/fluid-osk#readme",
+    "dependencies": {
+        "infusion": "4.0.0"
+    },
+    "devDependencies": {
+        "eslint": "8.12.0",
+        "eslint-config-fluid": "2.0.1",
+        "fluid-lint-all": "1.2.0-dev.20220406T090428Z.64f3edd.GH-48",
+        "fluid-testem": "2.1.15",
+        "recursive-copy": "2.0.14"
+    }
+}

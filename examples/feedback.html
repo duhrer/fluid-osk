@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Onscreen Typing Feedback</title>
+        <script src="../node_modules/infusion/dist/infusion-all.js"></script>
+
+        <script src="../src/js/templateRenderer.js"></script>
+        <script src="../src/js/key.js"></script>
+        <script src="../src/js/row.js"></script>
+        <script src="../src/js/keyboard.js"></script>
+        <script src="../src/js/keydefs.js"></script>
+        <script src="../src/js/keyboards.js"></script>
+
+        <link rel="stylesheet" href="../src/css/osk.css"/>
+
+        <script src="js/feedback.js"></script>
+    </head>
+    <body>
+        <h2>Onscreen Feedback Demo</h2>
+
+        <p>This example shows which keys are held onscreen, but the keys themselves are not focusable.</p>
+
+        <div class="osk"></div>
+
+        <script>
+            var component = osk.examples.feedback(".osk");
+        </script>
+    </body>
+</html>

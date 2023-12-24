@@ -1,0 +1,115 @@
+.osk-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/*
+    3 rem = clamp(2rem, 2vw, 0.25em);
+    1 rem = clamp(.66rem, .66vw, .083rem
+*/
+
+.osk-key {
+    border: 1px solid #999;
+    border-radius: clamp(2px, 0.25vw, 10px);
+    font-size: clamp(0.125rem, 1vw, 1rem);
+    height: clamp(0.5rem, 3vw, 3rem);
+    margin: clamp(0.125rem, 0.5vw, 1rem);
+    padding: clamp(0.125rem, 0.5vw, 0.5rem);
+    width: clamp(0.5rem, 3vw, 3rem);
+}
+
+.osk-key-Space {
+    margin-left: clamp(1.5rem, 9vw, 9rem);
+    width: clamp(5rem, 30vw, 30rem);
+}
+
+.osk-key-isDown {
+    background: #69f;
+}
+
+.osk-key-isDeactivated {
+    color: #999;
+}
+
+.osk-key-shiftLabel,
+.osk-key-label {
+    height: clamp(0.16rem, 1vw, 1rem);
+    line-height: clamp(0.2rem, 1vw, 1rem);
+    margin: 0;
+    padding: 0;
+}
+
+.osk-key-Tab,
+.osk-key-\\ {
+    width: clamp(0.75rem, 4.5vw, 4.5rem);
+}
+
+.osk-key-Insert {
+    margin-left: clamp(0.5rem, 3.5vw, 3.5rem);
+}
+
+.osk-key-Delete {
+    margin-left: clamp(1rem, 6vw, 6rem);
+}
+
+.osk-key-ArrowLeft {
+    margin-left: clamp(1.5rem, 9vw, 9rem);
+}
+
+.osk-key-ArrowUp {
+    margin-left: clamp(1.5rem, 9vw, 9rem);
+}
+
+.osk-key-CapsLock,
+.osk-key-Backspace,
+.osk-key-Enter {
+    width: clamp(1rem, 6vw, 6rem);
+}
+
+.osk-key-ShiftLeft,
+.osk-key-ShiftRight {
+    width: clamp(1.25rem, 7.5vw, 7.5rem);
+}
+
+.osk-text-input {
+    align-items: center;
+    background-color: white;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    font-size: 1.5rem;
+    height: 2rem;
+    padding: 0.25rem;
+}
+
+.osk-text-input-before-cursor {
+    margin-right: 0;
+    padding-right: 0;
+    white-space: pre;
+}
+
+.osk-text-input-after-cursor {
+    margin-left: 0;
+    padding-left: 0;
+    white-space: pre;
+}
+
+.osk-text-input-cursor {
+    -webkit-animation: cursor-animation 1s steps(2, start) infinite;
+    animation: cursor-animation 1s steps(2, start) infinite;
+    background-color: black;
+    height: 2rem;
+    width: 3px;
+}
+
+@keyframes cursor-animation {
+    to {
+        visibility: hidden;
+    }
+}
+
+@-webkit-keyframes cursor-animation {
+    to {
+        visibility: hidden;
+    }
+}
